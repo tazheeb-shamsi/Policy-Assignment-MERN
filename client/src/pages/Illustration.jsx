@@ -5,19 +5,49 @@ const bonusRate = [
 ];
 
 const Illustration = () => {
-  const [illustrationArray, setIllustrationArray] = useState([{}]);
+  const [illustrationArray, setIllustrationArray] = useState({});
 
-  const retrieveDataFromLocalStorage = () => {
-    const savedData = localStorage.getItem("policyUserData");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      setIllustrationArray(parsedData);
-    }
-  };
   useEffect(() => {
+    const retrieveDataFromLocalStorage = () => {
+      try {
+        const savedData = localStorage.getItem("policyUserData");
+        if (savedData) {
+          const parsedData = JSON.parse(savedData);
+          setIllustrationArray(parsedData);
+        }
+      } catch (error) {
+        console.error("Error retrieving data from localStorage:", error);
+      }
+    };
+
     retrieveDataFromLocalStorage();
   }, []);
+
   const PolicyYears = Array.from({ length: 20 }, (_, index) => index + 1);
+
+  const totalBenefit = (year, illustrationArray) => {
+    if (illustrationArray.length != 0) {
+      let bonus = [];
+      for (let i = 0; i < bonusRate.length; i++) {
+        bonus.push(
+          bonusRate[i] * Math.floor(illustrationArray.sumAssured) * 0.01
+        );
+      }
+      let x =
+        year == illustrationArray.policyTerm
+          ? +illustrationArray.sumAssured + +bonus.reduce((a, b) => a + b, 0)
+          : 0;
+      return x;
+    }
+  };
+
+  const calculateNetCashflows = (year, illustrationArray) => {
+    if (year === illustrationArray.policyTerm) {
+      return totalBenefit(year, illustrationArray);
+    } else {
+      return illustrationArray.sumAssured - illustrationArray.modalPremium;
+    }
+  };
 
   return (
     <div className="container p-2 mx-auto rounded-md sm:p-4 dark:text-gray-100 dark:bg-gray-900">
@@ -90,26 +120,14 @@ const Illustration = () => {
                   </span>
                 </td>
                 <td className="px-3 py-2">
-                  <span>
-                    {/* Total Benefit */}
-                    {year == illustrationArray.policyTerm
-                      ? Math.floor(illustrationArray.sumAssured) +
-                        bonusRate[index] *
-                          Math.floor(illustrationArray.sumAssured) *
-                          0.01
-                      : 0}
-                  </span>
+                  {/* Total Benifits */}
+                  <span>{totalBenefit(year, illustrationArray)}</span>
                 </td>
                 <td className="px-3 py-2">
                   <span>
                     {/* Net Cashflows */}
-                    {year === 18
-                      ? Math.floor(illustrationArray.sumAssured) +
-                        bonusRate[index] *
-                          Math.floor(illustrationArray.sumAssured) *
-                          0.01
-                      : illustrationArray.sumAssured -
-                        illustrationArray?.modalPremium}
+                    {/* FORMULA: if(premiumTerm=year) =>total benefit else => sumAssured-modalPremium) */}
+                    {calculateNetCashflows(year, illustrationArray)}
                   </span>
                 </td>
               </tr>
