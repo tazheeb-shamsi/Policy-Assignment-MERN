@@ -33,7 +33,6 @@ function PolicyCalculation() {
     const dobDate = new Date(dobParts[2], dobParts[1] - 1, dobParts[0]);
     const ageInMilliseconds = today - dobDate;
 
-    // Calculate age in years
     const ageInYears = Math.floor(
       ageInMilliseconds / (365.25 * 24 * 60 * 60 * 1000)
     );

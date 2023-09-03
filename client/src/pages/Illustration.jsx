@@ -5,7 +5,7 @@ const bonusRate = [
 ];
 
 const Illustration = () => {
-  const [illustrationArray, setIllustrationArray] = useState({});
+  const [illustrationArray, setIllustrationArray] = useState([]);
 
   useEffect(() => {
     const retrieveDataFromLocalStorage = () => {
@@ -42,22 +42,44 @@ const Illustration = () => {
   };
 
   const calculateNetCashflows = (year, illustrationArray) => {
-    if (year === illustrationArray.policyTerm) {
-      return totalBenefit(year, illustrationArray);
-    } else {
-      return illustrationArray.sumAssured - illustrationArray.modalPremium;
-    }
+    if (illustrationArray && Object.keys(illustrationArray).length > 0) {
+      let assuredSum = [];
+      let premium = [];
+      for (let i = 0; i < year; i++) {
+        assuredSum.push(
+          year == illustrationArray.policyTerm
+            ? illustrationArray.sumAssured
+            : 0
+        );
+        premium.push(
+          year <= illustrationArray.policyPremiumTerm
+            ? illustrationArray.modalPremium
+            : 0
+        );
+      }
+
+      
+
+      if (year === illustrationArray.policyTerm) {
+
+        return totalBenefit(year, illustrationArray);
+      } else {
+        for (let i = 0; i < year; i++) {
+          return assuredSum[i] - premium[i];
+        }
+      }
+    } else return 0;
   };
 
   return (
-    <div className="container p-2 mx-auto rounded-md sm:p-4 dark:text-gray-100 dark:bg-gray-900">
-      <h2 className="mb-3 text-2xl font-semibold leadi">Illustration</h2>
+    <div className="container p-2 mx-auto rounded-md sm:p-4 dark:text-gray-100 dark:bg-gray-900 w-[90%] h-[80%] ">
+      <h2 className="mb-3 text-2xl font-semibold text-center">Illustration</h2>
       <div className="overflow-x-auto">
         <table
           className="min-w-full text-xs table-bordered p-4"
           style={{ border: "2px solid black" }}
         >
-          <thead className="rounded-t-lg dark:bg-gray-700 ">
+          <thead className="rounded-t-lg dark:bg-gray-700 bg-yellow-200/40">
             <tr className="text-right">
               <th title="Ranking" className="p-3 text-center">
                 Policy Year
@@ -126,8 +148,11 @@ const Illustration = () => {
                 <td className="px-3 py-2">
                   <span>
                     {/* Net Cashflows */}
-                    {/* FORMULA: if(premiumTerm=year) =>total benefit else => sumAssured-modalPremium) */}
-                    {calculateNetCashflows(year, illustrationArray)}
+                    {/* {calculateNetCashflows(year, illustrationArray)} */}
+                    {calculateNetCashflows(
+                      year,
+                      illustrationArray
+                    ).toLocaleString()}
                   </span>
                 </td>
               </tr>

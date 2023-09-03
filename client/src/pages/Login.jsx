@@ -8,9 +8,9 @@ const LoginPage = () => {
     username: "",
     password: "",
   });
-   const onInputChange = (e) => {
-     setFormData({ ...formData, [e.target.name]: e.target.value });
-   };
+  const onInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
   const loginUser = async (e) => {
     e.preventDefault();
     try {
@@ -62,7 +62,8 @@ const LoginPage = () => {
 
           <div className="mt-10">
             <button
-              className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md hover:bg-purple-600 focus:outline-none focus:bg-purple-600"
+              className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-purple-700 rounded-md
+              hover:bg-purple-600 focus:outline-none focus:bg-purple-600 "
               onClick={(e) => loginUser(e)}
             >
               Login
