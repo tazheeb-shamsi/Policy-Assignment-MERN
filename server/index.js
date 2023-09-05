@@ -6,7 +6,7 @@ import Connection from "./db.js";
 import Routes from "./routes/route.js";
 
 dotenv.config();
-const app = express();
+export const app = express();
 
 const PORT = 8000;
 
